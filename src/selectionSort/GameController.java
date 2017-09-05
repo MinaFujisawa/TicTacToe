@@ -39,7 +39,7 @@ public class GameController {
             gameBoard[x][y] = turn+1;
             System.out.print("Good! ");
             displayStatus();
-            checkGameOver();
+            checkGameOver(x,y);
 
             turn++;
             if(turn > 1){
@@ -47,20 +47,16 @@ public class GameController {
             }
 
             //For Com
-            if(gameMode == 2) {
-                selectAuto();
-                turn++;
-                if(turn > 1){
-                    turn = 0;
-                }
+            if(gameMode == 2 && !gameOver) {
+                setSquareAuto();
             }
-            displayStatus();
-            checkGameOver();
+
         } else {
             System.out.println("Invalid inputs");
         }
     }
-    private void selectAuto(){
+
+    private void setSquareAuto(){
         Random random = new Random();
         int x, y;
 
@@ -70,7 +66,15 @@ public class GameController {
         } while (gameBoard[x][y] != 0);
 
         gameBoard[x][y] = 2;
+
+        turn++;
+        if(turn > 1){
+            turn = 0;
+        }
+        displayStatus();
+        checkGameOver(x,y);
     }
+
 
     private boolean isValid(int x, int y){
         if(x > 2 || y > 2){
@@ -83,8 +87,8 @@ public class GameController {
         return true;
     }
 
-    private void checkGameOver(){
-        if(matchHorizon() || matchVertical() || matchDiagonal()){
+    private void checkGameOver(int x, int y){
+        if(matchHorizon(x) || matchVertical(y) || matchDiagonal()){
             System.out.println("true horizon or vertical or diagonal");
             gameOver = true;
         } else {
@@ -114,43 +118,50 @@ public class GameController {
         return false;
     }
 
-    private boolean matchVertical(){
-        int x, y;
-        //Vertical
-        for(x = 0 ; x < 3; x++){
-            for(y = 0 ; y < 2; y++){
-                System.out.println("x " + x + " y " + y + gameBoard[x][y]);
-                if(gameBoard[y][x] != gameBoard[y+1][x]){
-                    gameOver = false;
-                    System.out.println("vertical false");
-                    return false;
-                }
+    private boolean matchVertical(int y){
+        int x;
+        for(x = 0 ; x < 2; x++){
+            System.out.println("x " + x + " y " + y + gameBoard[x][y]);
+            if(gameBoard[x][y] != gameBoard[x+1][y]){
+                gameOver = false;
+                System.out.println("vertical false");
+                return false;
             }
-            System.out.println("vertical true");
-            winner = gameBoard[y][x];
-            return true;
         }
-        return false;
+        System.out.println("vertical true");
+        winner = gameBoard[x][y];
+        return true;
     }
 
-    private boolean matchHorizon(){
-        int x, y;
-
-        for(x = 0 ; x < 3; x++){
-            for(y = 0 ; y < 2; y++){
-                System.out.println("x " + x + " y " + y + gameBoard[x][y]);
-                if(gameBoard[x][y] != gameBoard[x][y+1]){
-                    gameOver = false;
-                    System.out.println("horizon false");
-                    return false;
-                }
+    private boolean matchHorizon(int x){
+        int y;
+        for(y = 0 ; y < 2; y++){
+            System.out.println("x " + x + " y " + y + gameBoard[x][y]);
+            if(gameBoard[x][y] != gameBoard[x][y+1]){
+                gameOver = false;
+                System.out.println("horizon false");
+                return false;
             }
-            System.out.println("horizon true");
-            winner = gameBoard[x][y];
-            return true;
         }
-        return false;
+        System.out.println("horizon true");
+        winner = gameBoard[x][y];
+        return true;
     }
+
+//        for(x = 0 ; x < 3; x++){
+//            for(y = 0 ; y < 2; y++){
+//                System.out.println("x " + x + " y " + y + gameBoard[x][y]);
+//                if(gameBoard[x][y] != gameBoard[x][y+1]){
+//                    gameOver = false;
+//                    System.out.println("horizon false");
+//                    return false;
+//                }
+//            }
+//            System.out.println("horizon true");
+//            winner = gameBoard[x][y];
+//            return true;
+//        }
+
 
     public void displayWinner(){
         String winnerName = null;
